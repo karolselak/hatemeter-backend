@@ -18,17 +18,41 @@ router.post('/', async (req, res) => {
 router.put('/:agentId/:conversationId', async (req, res) => {
     var conversation = await Conversation.findOne({
         agentId: req.params.agentId,
-        conversationId: req.params.conversationId
+        conversationId: req.params.conversationId        
     });
 
-    // check if it works
-    conversation.listOfMessages.push({
-        message: "put user message here",
-        messageRate: "putBOTrate"
-    })
+    var myJSONObject = {
+        "documents": [{
+            "language": "en",
+            "id": "1",
+            "text": req.params.message
+        }]
+    };
+    fetch('https://francecentral.api.cognitive.microsoft.com/text/analytics/v2.1/sentiment', {
+        method: 'POST',
+        headers: {
+            "Ocp-Apim-Subscription-Key": "718a10e484374595a185d7b640303912",
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(myJSONObject)
+    }).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        var rate =data.documents[0].score;
+        // check if it works
+        conversation.listOfMessages.push({
+            message: req.params.message,
+            messageRate: rate
+        })
 
-    conversation = await conversation.save();
-    res.send(conversation);
+        conversation = await conversation.save();
+        res.send(conversation);
+
+    });
+
+
+   
 })
 
 /** updating new object(message) to the converstion */
