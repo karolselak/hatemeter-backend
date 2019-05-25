@@ -15,16 +15,19 @@ router.post('/', async (req, res) => {
 })
 
 /** adding new object(message) to the converstion */
+
 router.put('/addMessage', async (req, res) => {
     var conversation = await Conversation.findOne({
         agentId: req.params.agentId,
         conversationId: req.params.conversationId
     });
 
+
     conversation.listOfMessages.push({
         message: "put user message here",
         messageRate: "putBOTrate"
     })
+
 
     res.send(conversation);
 })
@@ -35,6 +38,7 @@ router.get('/:agentId', async (req, res) => {
     // to fix
     res.send(conversation);
 })
+
 
 /** taking one conversation for an agent with object as its messages */
 router.get('/:agentId/:conversationId', async (req, res) => {
