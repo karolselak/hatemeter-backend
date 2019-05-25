@@ -1,4 +1,5 @@
 const {Conversation} = require('../models/conversation');
+const {Agents} = require('../models/agent');
 const express = require("express")
 const router = express.Router()
 
@@ -15,37 +16,46 @@ router.post('/', async (req, res) => {
 })
 
 /** adding new object(message) to the converstion */
-router.put('/:agentId/:conversationId', async (req, res) => {
-    var conversation = await Conversation.findOne({
-        agentId: req.params.agentId,
-        conversationId: req.params.conversationId
-    });
+router.put('/', async (req, res) => {
+    if(!(await Agents.findOne({agentId: req.body.agentId}))){
+        var agent = new Agents({
+            agentId: req.body.agentId
+        })
+        agent = await agent.save();
+        res.send(agent);
+    }
+    if (!(await Conversation.findOne({
+            agentId: req.body.agentId, conversationId: req.body.conversationId
+        }))) {
+        var conversation = new Conversation({
+            agentId: req.body.agentId,
+            conversationId: req.body.conversationId,
+            listOfMessages: [{
+                message: req.body.message,
+                messageRate: req.body.messageRate
+            }]
+        })
 
-    // check if it works
-    conversation.listOfMessages.push({
-        message: "put user message here",
-        messageRate: "putBOTrate"
-    })
+        conversation = await conversation.save();
+        res.send(conversation);
+    }
+    else{
+        var conversation = await Conversation.findOne({
+            agentId: req.body.agentId,
+            conversationId: req.body.conversationId
+        });
 
-    conversation = await conversation.save();
-    res.send(conversation);
+        console.log(conversation.listOfMessages)
+        conversation.listOfMessages.push({
+            message: req.body.message,
+            messageRate: req.body.messageRate
+        })
+        conversation = await conversation.save();
+
+        console.log(conversation.listOfMessages)
+        res.send(conversation);
+    }
 })
-
-/** updating new object(message) to the converstion */
-// router.put('/:agentId', async (req, res) => {
-//     var conversation = await Conversation.findOneAndUpdate({
-//         agentId: req.params.agentId
-//     });
-
-//     conversation = new Conversation({
-//         agentId: req.body.agentId,
-//         conversationId: req.body.conversationId,
-//         listOfMessages: req.body.listOfMessages
-//     })
-
-//     conversation = await conversation.save();
-//     res.send(conversation);
-// })
 
 /** taking all conversations for one agent */
 router.get('/:agentId', async (req, res) => {
@@ -53,7 +63,6 @@ router.get('/:agentId', async (req, res) => {
     // to fix
     res.send(conversation);
 })
-
 
 /** taking one conversation for an agent with object as its messages */
 router.get('/:agentId/:conversationId', async (req, res) => {
