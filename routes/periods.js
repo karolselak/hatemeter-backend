@@ -34,11 +34,4 @@ router.post('/:agentId', async(req,res) => {
 });
 
 module.exports = router
-    res.send(lastPeriod);
-    res.send(period);
-});
-
-router.put('/:agentId', async (req, res) => {
-
-});
 
