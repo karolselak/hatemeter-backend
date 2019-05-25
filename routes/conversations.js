@@ -16,7 +16,6 @@ router.post('/', async (req, res) => {
 })
 
 /** adding new object(message) to the converstion */
-<<<<<<< HEAD
 router.put('/', async (req, res) => {
     if(!(await Agents.findOne({agentId: req.body.agentId}))){
         var agent = new Agents({
@@ -56,7 +55,6 @@ router.put('/', async (req, res) => {
         console.log(conversation.listOfMessages)
         res.send(conversation);
     }
-=======
 
 router.put('/addMessage', async (req, res) => {
     var conversation = await Conversation.findOne({
@@ -72,7 +70,7 @@ router.put('/addMessage', async (req, res) => {
 
 
     res.send(conversation);
->>>>>>> 273d0858d152334c780f22b170bc052e9f93603a
+
 })
 
 /** taking all conversations for one agent */
