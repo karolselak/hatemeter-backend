@@ -7,21 +7,19 @@ router.post('/:agentId', async(req,res) => {
 
     var lastPeriod = await Period.findOne({endTime: null});
     lastPeriod.endTime = startTime;
+    res.send(lastPeriod);
 
     var period = new Period({
         agentId: req.bady.agentId,
         periodId: req.body.periodId,
         ifBreak: req.body.ifBreak,
         startTime: startTime,
-        endTime: null
+        endTime: null,
+        startEsteem: startTime,
+        //endEsteem: 
     })
 
     period = await period.save();
 
-    res.send(lastPeriod);
     res.send(period);
-});
-
-router.put('/:agentId', async (req, res) => {
-
 });
