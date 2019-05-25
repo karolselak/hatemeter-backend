@@ -16,7 +16,7 @@ mongoose.connect("mongodb+srv://Piter:Piter2013@cluster0-ezldk.gcp.mongodb.net/t
 app.use(express.json());
 app.use('/agents', agent); //add user
 app.use('/conversations', conversation) //add message
-//app.use('/periods', period)
+app.use('/periods', period)
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
